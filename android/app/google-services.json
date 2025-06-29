@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "833913667595",
+    "project_id": "staffapp-6b86e",
+    "storage_bucket": "staffapp-6b86e.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:833913667595:android:6c36341a4fec738452c70e",
+        "android_client_info": {
+          "package_name": "com.example.dapur_mak_long_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCmYTYLqa3_iNRRG-1_HwZUnRaekbH8qgs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:833913667595:android:e9f0c6187b0f9f7452c70e",
+        "android_client_info": {
+          "package_name": "com.example.staff_crud_app_fixed"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCmYTYLqa3_iNRRG-1_HwZUnRaekbH8qgs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
