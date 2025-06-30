@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import '../services/firebase_service.dart';
-import 'staff_list_page.dart';
+import 'staff_list_page.dart'; // Ensure correct navigation to Staff List Page
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class StaffCreationPage extends StatefulWidget {
   const StaffCreationPage({Key? key}) : super(key: key);
@@ -14,28 +14,59 @@ class _StaffCreationPageState extends State<StaffCreationPage> {
   final idController = TextEditingController();
   final ageController = TextEditingController();
 
-  final FirebaseService _firebaseService = FirebaseService();
-
   void submitData() {
     final name = nameController.text;
     final id = idController.text;
     final age = ageController.text;
 
+    // Validation
     if (name.isEmpty || id.isEmpty || age.isEmpty) {
-      // Show an alert for missing input
+      _showErrorDialog('All fields are required!');
+      return;
+    }
+
+    if (id.length < 4) {
+      _showErrorDialog('Staff ID must be at least 4 characters long!');
+      return;
+    }
+
+    if (int.tryParse(age) == null || int.parse(age) < 18) {
+      _showErrorDialog('Please enter a valid age (18 or above)!');
       return;
     }
 
     // Save data to Firebase
-    _firebaseService.addStaff(name, id, age).then((_) {
-      if (mounted) {
-        // Navigate to the Staff List page if the widget is still mounted
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => StaffListPage()),
-        );
-      }
+    FirebaseFirestore.instance.collection('staff').add({
+      'name': name,
+      'id': id,
+      'age': age,
+    }).then((_) {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => StaffListPage()),
+      );
+    }).catchError((error) {
+      _showErrorDialog('Failed to add staff: $error');
     });
+  }
+
+  // Error dialog function
+  void _showErrorDialog(String message) {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text('Error'),
+        content: Text(message),
+        actions: [
+          TextButton(
+            child: Text('OK'),
+            onPressed: () {
+              Navigator.of(ctx).pop();
+            },
+          ),
+        ],
+      ),
+    );
   }
 
   @override
@@ -43,12 +74,12 @@ class _StaffCreationPageState extends State<StaffCreationPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Create Staff'),
-        backgroundColor: const Color.fromARGB(255, 150, 0, 62), // AppBar color change
-        elevation: 5, // Add shadow to the app bar for a subtle 3D effect
+        backgroundColor: const Color.fromARGB(255, 150, 0, 62),
+        elevation: 5,
       ),
       body: Padding(
         padding: EdgeInsets.all(16.0),
-        child: SingleChildScrollView( // Allow scrolling if keyboard appears
+        child: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
@@ -58,73 +89,61 @@ class _StaffCreationPageState extends State<StaffCreationPage> {
                 decoration: InputDecoration(
                   labelText: 'Staff Name',
                   labelStyle: TextStyle(
-                    color: const Color.fromARGB(255, 150, 0, 62), // Label color change
+                    color: const Color.fromARGB(255, 150, 0, 62),
                     fontSize: 18,
                   ),
                   border: OutlineInputBorder(),
                   focusedBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: const Color.fromARGB(255, 150, 0, 62), width: 2), // Focused border
-                  ),
-                  enabledBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: const Color.fromARGB(255, 150, 0, 62), width: 1), // Default border
+                    borderSide: BorderSide(color: const Color.fromARGB(255, 150, 0, 62), width: 2),
                   ),
                 ),
               ),
-              SizedBox(height: 16), // Space between fields
-
+              SizedBox(height: 16),
               // Staff ID Field
               TextField(
                 controller: idController,
                 decoration: InputDecoration(
                   labelText: 'Staff ID',
                   labelStyle: TextStyle(
-                    color: const Color.fromARGB(255, 150, 0, 62), // Label color change
+                    color: const Color.fromARGB(255, 150, 0, 62),
                     fontSize: 18,
                   ),
                   border: OutlineInputBorder(),
                   focusedBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: const Color.fromARGB(255, 150, 0, 62), width: 2), // Focused border
-                  ),
-                  enabledBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: const Color.fromARGB(255, 150, 0, 62), width: 1), // Default border
+                    borderSide: BorderSide(color: const Color.fromARGB(255, 150, 0, 62), width: 2),
                   ),
                 ),
               ),
-              SizedBox(height: 16), // Space between fields
-
+              SizedBox(height: 16),
               // Staff Age Field
               TextField(
                 controller: ageController,
                 decoration: InputDecoration(
                   labelText: 'Staff Age',
                   labelStyle: TextStyle(
-                    color: const Color.fromARGB(255, 150, 0, 62), // Label color change
+                    color: const Color.fromARGB(255, 150, 0, 62),
                     fontSize: 18,
                   ),
                   border: OutlineInputBorder(),
                   focusedBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color:const Color.fromARGB(255, 150, 0, 62), width: 2), // Focused border
-                  ),
-                  enabledBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: const Color.fromARGB(255, 150, 0, 62), width: 1), // Default border
+                    borderSide: BorderSide(color: const Color.fromARGB(255, 150, 0, 62), width: 2),
                   ),
                 ),
                 keyboardType: TextInputType.number,
               ),
-              SizedBox(height: 24), // Space before the button
-
+              SizedBox(height: 24),
               // Submit Button
               ElevatedButton(
                 onPressed: submitData,
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color.fromARGB(255, 150, 0, 62), // Correct way to set background color
-                  padding: EdgeInsets.symmetric(vertical: 12, horizontal: 30), // Padding
-                  textStyle: TextStyle(fontSize: 18, fontWeight: FontWeight.bold), // Text styling
+                  backgroundColor: const Color.fromARGB(255, 150, 0, 62),
+                  padding: EdgeInsets.symmetric(vertical: 12, horizontal: 30),
+                  textStyle: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8), // Rounded corners
+                    borderRadius: BorderRadius.circular(8),
                   ),
                 ),
-                child: Text('Submit'), // Correct 'child' parameter
+                child: Text('Submit'),
               ),
             ],
           ),
