@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'staff_list_page.dart'; // Ensure correct navigation to Staff List Page
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'staff_list_page.dart';  // Import the StaffListPage
 
 class StaffCreationPage extends StatefulWidget {
   const StaffCreationPage({Key? key}) : super(key: key);
@@ -144,6 +144,25 @@ class _StaffCreationPageState extends State<StaffCreationPage> {
                   ),
                 ),
                 child: Text('Submit'),
+              ),
+              SizedBox(height: 16),
+              // Button to go to Staff List Page directly without adding a staff
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => StaffListPage()),
+                  );
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color.fromARGB(255, 150, 0, 62),
+                  padding: EdgeInsets.symmetric(vertical: 12, horizontal: 30),
+                  textStyle: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                ),
+                child: Text('View Staff List'),
               ),
             ],
           ),
